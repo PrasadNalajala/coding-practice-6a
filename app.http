@@ -1,0 +1,17 @@
+POST http://localhost:3000/districts/
+Content-Type: application/json
+
+{
+    "districtName": "Bagalkot",
+    "stateId": 3,
+    "cases": 2323,
+    "cured": 200,
+    "active": 315,
+    "deaths": 8
+}
+
+
+
+GET http://localhost:3000/states/3
+
+GET http://localhost:3000/states/
