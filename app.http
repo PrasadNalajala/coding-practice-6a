@@ -19,7 +19,7 @@ GET http://localhost:3000/states/3
 GET http://localhost:3000/states/
 
 ###
-GET http://localhost:3000/districts/3/
+GET http://localhost:3000/districts/4/
 
 ###
 DELETE http://localhost:3000/districts/3/
@@ -40,4 +40,8 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:3000/states/:stateId/stats
+GET http://localhost:3000/states/3/stats
+
+###
+
+GET http://localhost:3000/districts/2/details/

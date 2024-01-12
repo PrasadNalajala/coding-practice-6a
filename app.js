@@ -30,7 +30,7 @@ initializeDb();
 
 app.get("/states", async (request, response) => {
   const query = `
-    SELECT * 
+    SELECT state_id as stateId , state_name as stateName  , population 
     FROM
     state`;
   const states = await db.all(query);
@@ -43,7 +43,7 @@ app.get("/states", async (request, response) => {
 app.get("/states/:stateId/", async (request, response) => {
   const { stateId } = request.params;
   const query = `
-    SELECT * 
+    SELECT state_id as stateId , state_name as stateName  , population 
     FROM
     state
     WHERE
@@ -69,7 +69,7 @@ app.post("/districts/", async (request, response) => {
       active,
       deaths,
     ]);
-    response.send("District added successfully");
+    response.send("District Successfully Added");
   } catch (e) {
     console.log("ERROR In", e);
   }
@@ -79,7 +79,8 @@ app.get("/districts/:districtId/", async (request, response) => {
   try {
     const { districtId } = request.params;
     const query = `
-    SELECT * FROM district WHERE district_id=${districtId}`;
+    SELECT district_id as districtId , district_name as districtName , state_id as stateId , cases , cured,active,deaths
+     FROM district WHERE district_id=${districtId}`;
     const district = await db.get(query);
     response.send(district);
   } catch (e) {
@@ -145,12 +146,34 @@ app.get("/states/:stateId/stats/", async (request, response) => {
   try {
     const { stateId } = request.params;
     const query = `
-    SELECT cases as totalCases,cured as totalCured ,active as totalActive, deaths as totalDeaths
+    SELECT SUM(cases) as totalCases, SUM(cured) as totalCured, SUM(active) as totalActive, SUM(deaths) as totalDeaths
     FROM state
-    INNER JOIN district ON district.state_id=state.state_id
-    WHERE state.state_id=${stateId}`;
+    INNER JOIN district ON district.state_id = state.state_id
+    WHERE state.state_id = ${stateId}`;
     const data = await db.get(query);
+    console.log(stateId);
     response.send(data);
+  } catch (e) {
+    console.log(e);
+    response.status(500).send("Internal Server Error");
+  }
+});
+
+app.get("/districts/:districtId/details/", async (request, response) => {
+  try {
+    const { districtId } = request.params;
+    const query = `
+    SELECT
+    state_name as stateName
+    FROM 
+    state
+    INNER JOIN district ON district.state_id=state.state_id
+    WHERE
+    district.state_id=${districtId}
+    `;
+    const state = await db.get(query);
+    const result = { stateName: state.stateName };
+    response.json(state);
   } catch (e) {
     console.log(e);
   }
