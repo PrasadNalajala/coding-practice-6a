@@ -164,7 +164,7 @@ app.get("/districts/:districtId/details/", async (request, response) => {
     const { districtId } = request.params;
     const query = `
     SELECT
-    state_name as stateName
+    state_name
     FROM 
     state
     INNER JOIN district ON district.state_id=state.state_id
@@ -172,8 +172,12 @@ app.get("/districts/:districtId/details/", async (request, response) => {
     district.state_id=${districtId}
     `;
     const state = await db.get(query);
-    const result = { stateName: state.stateName };
-    response.json(state);
+    const convertDbObjectToResponseObject = (state) => {
+      return {
+        stateName: state.state_name,
+      };
+    };
+    response.send(convertDbObjectToResponseObject(state));
   } catch (e) {
     console.log(e);
   }
